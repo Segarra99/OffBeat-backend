@@ -14,9 +14,50 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Password is required."],
     },
-    name: {
+    username: {
       type: String,
-      required: [true, "Name is required."],
+      required: [true, "Username is required."],
+    },
+    firstName: {
+      type: String,
+      required: [true, "First name is required"],
+    },
+    lastName: {
+      type: String,
+      required: [true, "Last name is required"],
+    },
+    nationality: {
+      type: String,
+    },
+    description: {
+      type: String,
+    },
+    genres: {
+      type: [String],
+    },
+    instruments: {
+      type: [String],
+    },
+    rank: {
+      type: Number,
+    },
+    img: {
+      type: String,
+    },
+    samples: {
+      type: [String],
+    },
+    bands: {
+      type: Schema.Types.ObjectId,
+      ref: "Band",
+    },
+    bandReviews: {
+      type: Schema.Types.ObjectId,
+      ref: "Review",
+    },
+    artistReviews: {
+      type: Schema.Types.ObjectId,
+      ref: "Review",
     },
   },
   {
