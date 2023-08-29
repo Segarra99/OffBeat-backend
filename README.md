@@ -145,7 +145,7 @@ Components:
   description: { type: String },
   genres: [String],
   instruments: [String],
-  rank: {Number},
+  rank: {type: Number},
   img: { type: String },
   bands: { type: Schema.Types.ObjectId, ref:'Band' },
   reviewsBand: { type: Schema.Types.ObjectId, ref:'Review' },
