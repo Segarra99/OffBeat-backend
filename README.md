@@ -138,19 +138,19 @@ Components:
 {
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  username: { type: String, required: true, unique: true}
+  username: { type: String, required: true, unique: true},
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   nationality: { type: String},
   description: { type: String },
-  genres: [String],
-  instruments: [String],
-  rank: {Number},
-  img: { type: String },
+  genres: {type: [String]},
+  instruments: {type: [String]},
+  rank: {type: Number},
+  img: {type: String },
   bands: { type: Schema.Types.ObjectId, ref:'Band' },
-  reviewsBand: { type: Schema.Types.ObjectId, ref:'Review' },
-  reviewsArtist: { type: Schema.Types.ObjectId, ref:'Review' },
-  samples: [ String ]
+  bandReviews: { type: Schema.Types.ObjectId, ref:'Review' },
+  artistReviews: { type: Schema.Types.ObjectId, ref:'Review' },
+  samples: {type: [ String ]}
 }
 ```
 
@@ -163,13 +163,13 @@ Components:
   name: { type: String, required: true, unique: true},
   img: { type: String },
   description: { type: String },
-  genres: [String],
+  genres: {type: [String]},
   founder: { type: Schema.Types.ObjectId, ref:'User', required: true },
   artists: [ { type: Schema.Types.ObjectId, ref:'User'} ],
-  samples: [ String ],
-  rank: {Number},
-  reviews: [{}],
-  missing: [ String ],
+  samples: {type: [ String ]},
+  rank: {type: Number},
+  reviews: {type: [{}]},
+  missing: {type: [ String ]},
   label: { type: String }
  }
 ```
