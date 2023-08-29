@@ -143,14 +143,14 @@ Components:
   lastName: { type: String, required: true },
   nationality: { type: String},
   description: { type: String },
-  genres: [String],
-  instruments: [String],
+  genres: {type: [String]},
+  instruments: {type: [String]},
   rank: {type: Number},
-  img: { type: String },
+  img: {type: String },
   bands: { type: Schema.Types.ObjectId, ref:'Band' },
   bandReviews: { type: Schema.Types.ObjectId, ref:'Review' },
   artistReviews: { type: Schema.Types.ObjectId, ref:'Review' },
-  samples: [ String ]
+  samples: {type: [ String ]}
 }
 ```
 
@@ -163,13 +163,13 @@ Components:
   name: { type: String, required: true, unique: true},
   img: { type: String },
   description: { type: String },
-  genres: [String],
+  genres: {type: [String]},
   founder: { type: Schema.Types.ObjectId, ref:'User', required: true },
   artists: [ { type: Schema.Types.ObjectId, ref:'User'} ],
-  samples: [ String ],
+  samples: {type: [ String ]},
   rank: {type: Number},
-  reviews: [{}],
-  missing: [ String ],
+  reviews: {type: [{}]},
+  missing: {type: [ String ]},
   label: { type: String }
  }
 ```
