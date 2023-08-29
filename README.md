@@ -148,8 +148,8 @@ Components:
   rank: {type: Number},
   img: { type: String },
   bands: { type: Schema.Types.ObjectId, ref:'Band' },
-  reviewsBand: { type: Schema.Types.ObjectId, ref:'Review' },
-  reviewsArtist: { type: Schema.Types.ObjectId, ref:'Review' },
+  bandReviews: { type: Schema.Types.ObjectId, ref:'Review' },
+  artistReviews: { type: Schema.Types.ObjectId, ref:'Review' },
   samples: [ String ]
 }
 ```
