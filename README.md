@@ -167,7 +167,7 @@ Components:
   founder: { type: Schema.Types.ObjectId, ref:'User', required: true },
   artists: [ { type: Schema.Types.ObjectId, ref:'User'} ],
   samples: [ String ],
-  rank: {Number},
+  rank: {type: Number},
   reviews: [{}],
   missing: [ String ],
   label: { type: String }
