@@ -111,9 +111,7 @@ router.delete("/bands/:bandId", async (req, res) => {
 
 /* POST Route for creating a review */
 router.post(
-  "/bands/:bandId/review",
-  fileUploader.single('review-picture'),
-  async (req, res) => {
+  "/bands/:bandId/review", fileUploader.single('review-picture'), async (req, res) => {
     const { bandId } = req.params;
     const { content, user } = req.body;
     try {
@@ -134,7 +132,7 @@ router.post(
         $push: { reviews: newReview },
       });
       await User.findByIdAndUpdate(userId, {
-        $push: { reviews: newReview },
+        $push: { bandReviews: newReview },
 
       });
       res.json(newReview);

@@ -21,6 +21,9 @@ app.use("/api", indexRoutes);
 const bandRoutes = require("./routes/band.routes");
 app.use("/", bandRoutes);
 
+const userRoutes = require("./routes/user.routes");
+app.use("/", userRoutes);
+
 const authRoutes = require("./routes/auth.routes");
 app.use("/", authRoutes);
 
