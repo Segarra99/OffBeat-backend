@@ -28,11 +28,9 @@ router.post("/signup", (req, res, next) => {
     firstName === "" ||
     lastName === ""
   ) {
-    res
-      .status(400)
-      .json({
-        message: "Provide email, password, username, first name and last name",
-      });
+    res.status(400).json({
+      message: "Provide email, password, username, first name and last name",
+    });
     return;
   }
 
