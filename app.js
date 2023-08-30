@@ -18,8 +18,8 @@ require("./config")(app);
 const indexRoutes = require("./routes/index.routes");
 app.use("/api", indexRoutes);
 
-const bandRoutes = require('./routes/band.routes');
-app.use('/', bandRoutes);
+const bandRoutes = require("./routes/band.routes");
+app.use("/", bandRoutes);
 
 const authRoutes = require("./routes/auth.routes");
 app.use("/", authRoutes);

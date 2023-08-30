@@ -21,8 +21,18 @@ router.post("/signup", (req, res, next) => {
   const { email, password, username, firstName, lastName } = req.body;
 
   // Check if email or password or name are provided as empty strings
-  if (email === "" || password === "" || username === "" || firstName === "" || lastName === "") {
-    res.status(400).json({ message: "Provide email, password, username, first name and last name" });
+  if (
+    email === "" ||
+    password === "" ||
+    username === "" ||
+    firstName === "" ||
+    lastName === ""
+  ) {
+    res
+      .status(400)
+      .json({
+        message: "Provide email, password, username, first name and last name",
+      });
     return;
   }
 
@@ -58,7 +68,13 @@ router.post("/signup", (req, res, next) => {
 
       // Create the new user in the database
       // We return a pending promise, which allows us to chain another `then`
-      return User.create({ email, password: hashedPassword, username, firstName, lastName });
+      return User.create({
+        email,
+        password: hashedPassword,
+        username,
+        firstName,
+        lastName,
+      });
     })
     .then((createdUser) => {
       // Deconstruct the newly created user object to omit the password
