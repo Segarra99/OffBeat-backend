@@ -2,7 +2,7 @@ const router = require("express").Router();
 const mongoose = require("mongoose");
 const fileUploader = require("../config/cloudinary.config");
 
-/* Requiring all models */
+/* Requiring models */
 const Band = require("../models/Band.model");
 const Review = require("../models/Review.model");
 const User = require("../models/User.model");
@@ -13,9 +13,13 @@ router.post("/bands", fileUploader.single("band-picture"), async (req, res) => {
     req.body;
 
   try {
+    let img = '';
+    if(req.file){
+      img = req.file.path;
+    };
     let response = await Band.create({
       name,
-      img: req.file.path,
+      img: img,
       description,
       genres,
       missing,
@@ -68,11 +72,15 @@ router.put(
     const { bandId } = req.params;
     const { name, description, genres, missing, label, artists } = req.body;
     try {
+      let img = "";
+      if (req.file){
+        img = req.file.path;
+      };
       let updateBand = await Band.findByIdAndUpdate(
         bandId,
         {
           name,
-          img: req.file.path,
+          img: img,
           description,
           genres,
           missing,
@@ -109,10 +117,14 @@ router.post(
     const { bandId } = req.params;
     const { content, user } = req.body;
     try {
+      let img = "";
+      if (req.file){
+        img = req.file.path;
+      };
       const band = await Band.findById(bandId);
       const newReview = await Review.create({
         content,
-        img: req.file.path,
+        img: img,
         user,
         band,
       });
