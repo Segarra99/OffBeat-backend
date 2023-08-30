@@ -130,10 +130,10 @@ router.post(
       });
       const reviewUser = await User.findById(req.session.currentUser._id);
       const userId = reviewUser._id;
-      const updateBand = await Band.findByIdAndUpdate(bandId, {
+      await Band.findByIdAndUpdate(bandId, {
         $push: { reviews: newReview },
       });
-      const updateUser = await User.findByIdAndUpdate(userId, {
+      await User.findByIdAndUpdate(userId, {
         $push: { reviews: newReview },
 
       });
