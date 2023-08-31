@@ -161,4 +161,14 @@ router.post("/review/:reviewId/delete", async (req, res) => {
   }
 });
 
+/* GET Route to get all the artists */
+router.get("/artists", async (req, res) => {
+  try {
+    let allArtists = await User.find();
+    res.json(allArtists);
+  } catch (error) {
+    res.json(error);
+  }
+});
+
 module.exports = router;
