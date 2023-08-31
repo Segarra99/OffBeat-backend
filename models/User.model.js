@@ -51,14 +51,14 @@ const userSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Band",
     },
-    bandReviews: {
+    bandReviews: [{
       type: Schema.Types.ObjectId,
       ref: "Review",
-    },
-    artistReviews: {
+    }],
+    artistReviews: [{
       type: Schema.Types.ObjectId,
       ref: "Review",
-    },
+    }],
   },
   {
     // this second object adds extra properties: `createdAt` and `updatedAt`
