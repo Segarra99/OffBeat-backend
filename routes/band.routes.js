@@ -13,10 +13,10 @@ router.post("/bands", fileUploader.single("band-picture"), async (req, res) => {
     req.body;
 
   try {
-    let img = '';
-    if(req.file){
+    let img = "";
+    if (req.file) {
       img = req.file.path;
-    };
+    }
     let response = await Band.create({
       name,
       img: img,
@@ -73,9 +73,9 @@ router.put(
     const { name, description, genres, missing, label, artists } = req.body;
     try {
       let img = "";
-      if (req.file){
+      if (req.file) {
         img = req.file.path;
-      };
+      }
       let updateBand = await Band.findByIdAndUpdate(
         bandId,
         {
@@ -111,14 +111,16 @@ router.delete("/bands/:bandId", async (req, res) => {
 
 /* POST Route for creating a review */
 router.post(
-  "/bands/:bandId/review", fileUploader.single('review-picture'), async (req, res) => {
+  "/bands/:bandId/review",
+  fileUploader.single("review-picture"),
+  async (req, res) => {
     const { bandId } = req.params;
     const { content, user } = req.body;
     try {
       let img = "";
-      if (req.file){
+      if (req.file) {
         img = req.file.path;
-      };
+      }
       const band = await Band.findById(bandId);
       const newReview = await Review.create({
         content,
@@ -133,11 +135,9 @@ router.post(
       });
       await User.findByIdAndUpdate(userId, {
         $push: { bandReviews: newReview },
-
       });
       res.json(newReview);
-      
-    } catch (error) { 
+    } catch (error) {
       res.json(error);
     }
   }
