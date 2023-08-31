@@ -79,10 +79,10 @@ router.post("/signup", (req, res, next) => {
     .then((createdUser) => {
       // Deconstruct the newly created user object to omit the password
       // We should never expose passwords publicly
-      const { email, name, _id } = createdUser;
+      const { email, username, _id } = createdUser;
 
       // Create a new object that doesn't expose the password
-      const user = { email, name, _id };
+      const user = { email, username, _id };
 
       // Send a json response containing the user object
       res.status(201).json({ user: user });
@@ -92,16 +92,16 @@ router.post("/signup", (req, res, next) => {
 
 // POST  /auth/login - Verifies email and password and returns a JWT
 router.post("/login", (req, res, next) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
-  // Check if email or password are provided as empty string
-  if (email === "" || password === "") {
-    res.status(400).json({ message: "Provide email and password." });
+  // Check if username or password are provided as empty string
+  if (username === "" || password === "") {
+    res.status(400).json({ message: "Provide username and password." });
     return;
   }
 
-  // Check the users collection if a user with the same email exists
-  User.findOne({ email })
+  // Check the users collection if a user with the same username exists
+  User.findOne({ username })
     .then((foundUser) => {
       if (!foundUser) {
         // If the user is not found, send an error response
@@ -114,10 +114,10 @@ router.post("/login", (req, res, next) => {
 
       if (passwordCorrect) {
         // Deconstruct the user object to omit the password
-        const { _id, email, name } = foundUser;
+        const { _id, email, username } = foundUser;
 
         // Create an object that will be set as the token payload
-        const payload = { _id, email, name };
+        const payload = { _id, email, username };
 
         // Create a JSON Web Token and sign it
         const authToken = jwt.sign(payload, process.env.TOKEN_SECRET, {
