@@ -9,7 +9,7 @@ const User = require("../models/User.model");
 
 /* POST Route that creates a new band */
 router.post("/bands", fileUploader.single("band-picture"), async (req, res) => {
-  const { name, description, genres, missing, label, artists, founder } =
+  const { name, description, genres, missing, artists, founder } =
     req.body;
 
   try {
@@ -23,7 +23,6 @@ router.post("/bands", fileUploader.single("band-picture"), async (req, res) => {
       description,
       genres,
       missing,
-      label,
       artists,
       founder,
     });
@@ -70,7 +69,7 @@ router.put(
   fileUploader.single("band-picture"),
   async (req, res) => {
     const { bandId } = req.params;
-    const { name, description, genres, missing, label, artists } = req.body;
+    const { name, description, genres, missing, artists } = req.body;
     try {
       let img = "";
       if (req.file) {
@@ -84,7 +83,6 @@ router.put(
           description,
           genres,
           missing,
-          label,
           artists,
         },
         { new: true }

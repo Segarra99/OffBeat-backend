@@ -14,7 +14,7 @@ const bandSchema = new Schema({
   },
   genres: {
     type: [String],
-    required: [true, "Must have at least 1 genre"],
+/*     required: [true, "Must have at least 1 genre"], */
   },
   samples: {
     type: [String],
@@ -37,7 +37,7 @@ const bandSchema = new Schema({
   founder: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    required: true,
+    /* required: true, */
   },
   artists: {
     type: Schema.Types.ObjectId,
