@@ -8,6 +8,9 @@ const reviewSchema = new Schema({
   img: {
     type: String,
   },
+  rating: {
+    type: Number,
+  },
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
