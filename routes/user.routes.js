@@ -1,7 +1,11 @@
 const router = require("express").Router();
-const fileUploader = require("../config/cloudinary.config");
-const User = require("../models/User.model");
+const mongoose = require("mongoose");
+const { isAuthenticated } = require("../middleware/jwt.middleware");
+
+/* Requiring models */
+const Band = require("../models/Band.model");
 const Review = require("../models/Review.model");
+const User = require("../models/User.model");
 
 /* GET route to render user profiles */
 router.get("/profile/:userId", async (req, res) => {
@@ -41,35 +45,38 @@ router.get("/profile/:userId", async (req, res) => {
 });
 
 /* POST route to edit profile page */
-router.post(
-  "/profile/:userId/edit",
-  fileUploader.single("profile-picture"),
-  async (req, res) => {
-    try {
-      let { userId } = req.params;
-      let { username, firstName, lastName, nationality, description, genres } =
-        req.body;
-      let currentUser = await User.findById(req.session.currentUser._id);
-      let profileUser = await User.findById(userId);
-      await User.findByIdAndUpdate(userId, {
-        username,
-        firstName,
-        lastName,
-        nationality,
-        description,
-        genres,
-        img: req.file.path,
-      });
-      let permission = false;
-      if (currentUser === profileUser) {
-        permission = true;
-      }
-      res.json(permission);
-    } catch (error) {
-      res.json(error);
+router.post("/profile/:userId/edit", async (req, res) => {
+  try {
+    let { userId } = req.params;
+    let {
+      username,
+      firstName,
+      lastName,
+      img,
+      nationality,
+      description,
+      genres,
+    } = req.body;
+    let currentUser = await User.findById(req.session.currentUser._id);
+    let profileUser = await User.findById(userId);
+    await User.findByIdAndUpdate(userId, {
+      username,
+      firstName,
+      lastName,
+      img,
+      nationality,
+      description,
+      genres,
+    });
+    let permission = false;
+    if (currentUser === profileUser) {
+      permission = true;
     }
+    res.json(permission);
+  } catch (error) {
+    res.json(error);
   }
-);
+});
 
 /* POST Route to delete use profile */
 router.post("/profile/:userId/delete", async (req, res) => {
@@ -97,33 +104,38 @@ router.post("/profile/:userId/delete", async (req, res) => {
 });
 
 /* POST Route to leave a review on the artist */
-router.post(
-  "/profile/:userId/review",
-  fileUploader.single("review-picture"),
-  async (req, res) => {
-    try {
-      const { userId } = req.params;
-      const { content } = req.body;
-      const artist = await User.findById(userId);
-      const user = await User.findById(req.session.currentUser._id);
-      const newReview = await Review.create({
-        content,
-        img: req.file.path,
-        user,
-        artist,
-      });
-      await User.findByIdAndUpdate(artist._id, {
-        $push: { artistReviews: newReview },
-      });
-      await User.findByIdAndUpdate(user._id, {
-        $push: { artistReviews: newReview },
-      });
-      res.json(newReview);
-    } catch (error) {
-      res.json(error);
-    }
+router.post("/profile/:userId/review", isAuthenticated, async (req, res) => {
+  const { userId } = req.params;
+  const { content, rating, img } = req.body;
+  const user = req.payload;
+  try {
+    const newReview = await Review.create({
+      content,
+      img,
+      rating,
+    });
+
+    await User.findByIdAndUpdate(userId, {
+      $push: { reviews: newReview._id },
+    });
+
+    await User.findByIdAndUpdate(user._id, {
+      $push: { artistReviews: newReview._id },
+    });
+
+    await Review.findByIdAndUpdate(newReview._id, {
+      $push: { user: user._id },
+    });
+
+    await Review.findByIdAndUpdate(newReview._id, {
+      $push: { artist: userId },
+    });
+
+    res.json(newReview);
+  } catch (error) {
+    res.json(error);
   }
-);
+});
 
 /* POST route to delete reviews */
 router.post("/review/:reviewId/delete", async (req, res) => {

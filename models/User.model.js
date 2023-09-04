@@ -51,6 +51,10 @@ const userSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Band",
     },
+    reviews: [{
+      type: Schema.Types.ObjectId,
+      ref: "Review",
+    }],
     bandReviews: [{
       type: Schema.Types.ObjectId,
       ref: "Review",
