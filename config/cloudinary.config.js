@@ -13,6 +13,7 @@ const storage = new CloudinaryStorage({
   params: {
     allowed_formats: ["jpg", "png", "gif", "mp3", "wav"],
     folder: "offbeat",
+    resource_type: "raw",
   },
 });
 
