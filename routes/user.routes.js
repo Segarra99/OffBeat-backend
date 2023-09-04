@@ -8,14 +8,11 @@ const Review = require("../models/Review.model");
 const User = require("../models/User.model");
 
 /* GET route to render user profiles */
-router.get("/profile/:userId", async (req, res) => {
+router.get("/profile/:userId", isAuthenticated, async (req, res) => {
+  let { userId } = req.params;
+  const user = req.payload
   try {
-    let { userId } = req.params;
-    let user = null;
-
-    if (req.session.currentUser) {
-      user = await User.findById(req.session.currentUser._id);
-    }
+    let currentUser = await User.findById(user._id);
     let profileUser = await User.findById(userId);
     await profileUser.populate("bands bandReviews artistReviews");
     await profileUser.populate({
@@ -33,12 +30,7 @@ router.get("/profile/:userId", async (req, res) => {
       },
     });
 
-    const response = {
-      currentUser: user,
-      profileUser: profileUser,
-    };
-
-    res.json(response);
+    res.json({profileUser, currentUser});
   } catch (error) {
     res.json(error);
   }
