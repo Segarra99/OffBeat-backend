@@ -183,4 +183,77 @@ router.get("/artists", async (req, res) => {
   }
 });
 
+
+/* FRIEND REQUESTS */
+
+/* GET Route to see friend requests */
+router.get("/friend-requests", isAuthenticated, async(req,res)=>{
+  const user = req.payload;
+  try{
+    const currentUser = await User.findById(user._id);
+    currentUser.populate("friendRequests");
+    res.json(currentUser.friendRequests);
+  }
+  catch(error){
+    res.json(error);
+  }
+})
+
+/* PUT Route to send a friend request */
+router.put("/friend-request/:friendId", isAuthenticated, async(req,res)=>{
+  const {friendId} = req.params;
+  const user = req.payload;
+  try{
+    await User.findByIdAndUpdate(friendId, {
+      $push: {friendRequests: user._id}
+    });
+    res.json(user);
+  }
+  catch(error){
+    res.json(error);
+  }
+})
+
+/* PUT Route to accept a friend request */
+router.put("/friend-request/:friendId/accept", isAuthenticated, async(req,res)=>{
+  const {friendId} = req.params;
+  const user = req.payload;
+  try{
+    await User.findByIdAndUpdate(user._id, {
+      $pull: {friendRequests: friendId},
+      $push: {friends: friendId}
+    });
+  }
+  catch(error){
+    res.json(error);
+  }
+})
+
+/* PUT Route to decline a friend request */
+router.put("/friend-request/:friendId/decline", isAuthenticated, async(req,res)=>{
+  const {friendId} = req.params;
+  const user = req.payload;
+  try{
+    await User.findByIdAndUpdate(user._id, {
+      $pull: {friendRequests: friendId}
+    })
+  }
+  catch(error){
+    res.json(error);
+  }
+})
+
+/* GET Route to see all friends */
+router.get("/friends", isAuthenticated, async(req,res)=>{
+  const user = req.payload;
+  try{
+    const currentUser = await User.findById(user._id)
+    currentUser.populate("friends");
+    res.json(currentUser.friends);
+  }
+  catch(error){
+    res.json(error);
+  }
+})
+
 module.exports = router;
