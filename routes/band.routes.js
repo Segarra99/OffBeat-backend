@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const mongoose = require("mongoose");
 const fileUploader = require("../config/cloudinary.config");
+const { isAuthenticated } = require("../middleware/jwt.middleware");
 
 /* Requiring models */
 const Band = require("../models/Band.model");
@@ -8,18 +9,14 @@ const Review = require("../models/Review.model");
 const User = require("../models/User.model");
 
 /* POST Route that creates a new band */
-router.post("/bands", fileUploader.single("band-picture"), async (req, res) => {
-  const { name, description, genres, missing, artists, founder } =
+router.post("/bands", async (req, res) => {
+  const { name, description, genres, missing, artists, founder, img } =
     req.body;
 
   try {
-    let img = "";
-    if (req.file) {
-      img = req.file.path;
-    }
     let response = await Band.create({
       name,
-      img: img,
+      img,
       description,
       genres,
       missing,
@@ -30,6 +27,14 @@ router.post("/bands", fileUploader.single("band-picture"), async (req, res) => {
   } catch (error) {
     res.json(error);
   }
+});
+
+router.post("/upload", fileUploader.single("img"), (req, res, next) => {
+  if (!req.file) {
+    res.json({ fileUrl: "" });
+    return;
+  }
+  res.json({ fileUrl: req.file.path });
 });
 
 /* GET Route that lists all the bands */
@@ -64,35 +69,27 @@ router.get("/bands/:bandId", async (req, res) => {
 });
 
 /* PUT Route to update info of a Band */
-router.put(
-  "/bands/:bandId",
-  fileUploader.single("band-picture"),
-  async (req, res) => {
-    const { bandId } = req.params;
-    const { name, description, genres, missing, artists } = req.body;
-    try {
-      let img = "";
-      if (req.file) {
-        img = req.file.path;
-      }
-      let updateBand = await Band.findByIdAndUpdate(
-        bandId,
-        {
-          name,
-          img: img,
-          description,
-          genres,
-          missing,
-          artists,
-        },
-        { new: true }
-      );
-      res.json(updateBand);
-    } catch (error) {
-      res.json(error);
-    }
+router.put("/bands/:bandId", async (req, res) => {
+  const { bandId } = req.params;
+  const { name, description, genres, missing, artists, img } = req.body;
+  try {
+    let updateBand = await Band.findByIdAndUpdate(
+      bandId,
+      {
+        name,
+        img,
+        description,
+        genres,
+        missing,
+        artists,
+      },
+      { new: true }
+    );
+    res.json(updateBand);
+  } catch (error) {
+    res.json(error);
   }
-);
+});
 
 /* DELETE Route to delete a band */
 router.delete("/bands/:bandId", async (req, res) => {
@@ -108,38 +105,36 @@ router.delete("/bands/:bandId", async (req, res) => {
 /* REVIEWS ROUTES */
 
 /* POST Route for creating a review */
-router.post(
-  "/bands/:bandId/review",
-  fileUploader.single("review-picture"),
-  async (req, res) => {
-    const { bandId } = req.params;
-    const { content, user, rating } = req.body;
-    try {
-      let img = "";
-      if (req.file) {
-        img = req.file.path;
-      }
-      const band = await Band.findById(bandId);
-      const newReview = await Review.create({
-        content,
-        img: img,
-        user,
-        rating,
-        band,
-      });
-      const reviewUser = await User.findById(req.session.currentUser._id);
-      const userId = reviewUser._id;
-      await Band.findByIdAndUpdate(bandId, {
-        $push: { reviews: newReview },
-      });
-      await User.findByIdAndUpdate(userId, {
-        $push: { bandReviews: newReview },
-      });
-      res.json(newReview);
-    } catch (error) {
-      res.json(error);
-    }
+router.post("/bands/:bandId/review", isAuthenticated, async (req, res) => {
+  const { bandId } = req.params;
+  const { content, rating, img } = req.body;
+  const user = req.payload;
+  try {
+    const newReview = await Review.create({
+      content,
+      img,
+      rating,
+    });
+
+    await Band.findByIdAndUpdate(bandId, {
+      $push: { reviews: newReview._id },
+    });
+
+    await User.findByIdAndUpdate(user._id, {
+      $push: { bandReviews: newReview._id },
+    });
+
+    await Review.findByIdAndUpdate(newReview._id, {
+      $push: { user: user._id },
+    });
+
+    await Review.findByIdAndUpdate(newReview._id, {
+      $push: { band: bandId },
+    });
+    res.json(newReview);
+  } catch (error) {
+    res.json(error);
   }
-);
+});
 
 module.exports = router;

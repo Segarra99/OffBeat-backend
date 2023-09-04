@@ -59,6 +59,14 @@ const userSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Review",
     }],
+    friends: [{
+      type: Schema.Types.ObjectId,
+      ref: "User"
+    }],
+    friendRequests: [{
+      type: Schema.Types.ObjectId,
+      ref: "User"
+    }]
   },
   {
     // this second object adds extra properties: `createdAt` and `updatedAt`
