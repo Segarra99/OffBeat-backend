@@ -113,7 +113,7 @@ router.post(
   fileUploader.single("review-picture"),
   async (req, res) => {
     const { bandId } = req.params;
-    const { content, user } = req.body;
+    const { content, user, rating } = req.body;
     try {
       let img = "";
       if (req.file) {
@@ -124,6 +124,7 @@ router.post(
         content,
         img: img,
         user,
+        rating,
         band,
       });
       const reviewUser = await User.findById(req.session.currentUser._id);
