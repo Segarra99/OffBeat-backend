@@ -26,7 +26,7 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Last name is required"],
     },
-    nationality: {
+    country: {
       type: String,
     },
     description: {
