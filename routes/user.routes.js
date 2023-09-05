@@ -37,10 +37,10 @@ router.get("/profile/:userId", isAuthenticated, async (req, res) => {
 });
 
 /* POST route to edit profile page */
-router.post("/profile/:userId/edit", async (req, res) => {
+router.post('/profile/:userId/edit', isAuthenticated, async (req, res) => {
   try {
-    let { userId } = req.params;
-    let {
+    const { userId } = req.params;
+    const {
       username,
       firstName,
       lastName,
@@ -49,24 +49,31 @@ router.post("/profile/:userId/edit", async (req, res) => {
       description,
       genres,
     } = req.body;
-    let currentUser = await User.findById(req.session.currentUser._id);
-    let profileUser = await User.findById(userId);
-    await User.findByIdAndUpdate(userId, {
-      username,
-      firstName,
-      lastName,
-      img,
-      nationality,
-      description,
-      genres,
-    });
-    let permission = false;
-    if (currentUser === profileUser) {
-      permission = true;
+
+    const currentUser = await User.findById(req.session.currentUser._id);
+    const profileUser = await User.findById(userId);
+
+    // Check if the current user is the profile user
+    const permission = currentUser._id.toString() === profileUser._id.toString();
+
+    if (permission) {
+      // Update the user's profile
+      await User.findByIdAndUpdate(userId, {
+        username,
+        firstName,
+        lastName,
+        img,
+        nationality,
+        description,
+        genres,
+      });
+      res.json({ success: true, message: 'Profile updated successfully' });
+    } else {
+      res.status(403).json({ error: 'Permission denied' });
     }
-    res.json(permission);
   } catch (error) {
-    res.json(error);
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred' });
   }
 });
 
