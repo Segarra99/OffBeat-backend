@@ -26,7 +26,7 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Last name is required"],
     },
-    nationality: {
+    country: {
       type: String,
     },
     description: {
@@ -69,7 +69,8 @@ const userSchema = new Schema(
     }],
     friendRequests: [{
       type: Schema.Types.ObjectId,
-      ref: "User"
+      ref: "User",
+      unique: true
     }]
   },
   {
