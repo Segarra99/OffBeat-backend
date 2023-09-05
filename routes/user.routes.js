@@ -213,6 +213,19 @@ router.put("/friend-request/:friendId", isAuthenticated, async(req,res)=>{
   }
 })
 
+/* PUT Route to remove a friend request */
+router.put("/friend-request/:friendId/remove", isAuthenticated, async(req,res)=>{
+  const {friendId} = req.params;
+  const user = req.payload;
+  try{
+    await User.findByIdAndUpdate(friendId, {
+      $pull: {friendRequests: user._id}
+    });
+  }catch(error){
+    res.json(error);
+  }
+})
+
 /* PUT Route to accept a friend request */
 router.put("/friend-request/:friendId/accept", isAuthenticated, async(req,res)=>{
   const {friendId} = req.params;
