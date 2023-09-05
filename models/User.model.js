@@ -51,27 +51,49 @@ const userSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Band",
     },
-    reviews: [{
-      type: Schema.Types.ObjectId,
-      ref: "Review",
-    }],
-    bandReviews: [{
-      type: Schema.Types.ObjectId,
-      ref: "Review",
-    }],
-    artistReviews: [{
-      type: Schema.Types.ObjectId,
-      ref: "Review",
-    }],
-    friends: [{
-      type: Schema.Types.ObjectId,
-      ref: "User"
-    }],
-    friendRequests: [{
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      unique: true
-    }]
+    reviews: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Review",
+      },
+    ],
+    bandReviews: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Review",
+      },
+    ],
+    artistReviews: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Review",
+      },
+    ],
+    friends: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    friendRequests: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        unique: true,
+      },
+    ],
+    posts: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Post",
+      },
+    ],
+    messages: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Message",
+      },
+    ],
   },
   {
     // this second object adds extra properties: `createdAt` and `updatedAt`
