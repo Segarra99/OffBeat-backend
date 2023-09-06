@@ -78,7 +78,7 @@ router.post("/profile/:userId/edit", isAuthenticated, async (req, res) => {
   }
 });
 
-/* POST Route to delete use profile */
+/* POST Route to delete user profile */
 router.post("/profile/:userId/delete", async (req, res) => {
   try {
     let { userId } = req.params;
@@ -277,5 +277,7 @@ router.get("/friends", isAuthenticated, async (req, res) => {
     res.json(error);
   }
 });
+
+/* POST Route to  */
 
 module.exports = router;
