@@ -14,7 +14,7 @@ router.get("/profile/:userId", isAuthenticated, async (req, res) => {
   try {
     let currentUser = await User.findById(user._id);
     let profileUser = await User.findById(userId);
-    await profileUser.populate("bands bandReviews artistReviews");
+    await profileUser.populate("bands bandReviews artistReviews samples");
     await profileUser.populate({
       path: "bandReviews",
       populate: {
