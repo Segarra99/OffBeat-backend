@@ -53,7 +53,7 @@ router.post("/feed", async (req, res) => {
       let response = await Post.create({
         content,
         img,
-        author: user
+        author: user._id
       });
 
       res.json(response);
