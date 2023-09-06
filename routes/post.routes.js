@@ -15,6 +15,7 @@ router.get("/feed", async (req, res) => {
 
     try {
         let allPosts = await Post.find().populate("author comments likes")
+        
         res.json(allPosts);
     }
     catch(error){
@@ -45,7 +46,7 @@ router.get("/feed/:postId", async (req, res) => {
 
 /* POST route that creates a new post */
 router.post("/feed", async (req, res) => {
-    const { content, img } =
+    const { content, img, author } =
       req.body;
   
     try {
@@ -53,9 +54,9 @@ router.post("/feed", async (req, res) => {
       let response = await Post.create({
         content,
         img,
-        author: user._id
+        author,
       });
-
+      
       res.json(response);
     } catch (error) {
       res.json(error);
