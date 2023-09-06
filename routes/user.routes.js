@@ -37,7 +37,7 @@ router.get("/profile/:userId", isAuthenticated, async (req, res) => {
 });
 
 /* POST route to edit profile page */
-router.post('/profile/:userId/edit', isAuthenticated, async (req, res) => {
+router.post("/profile/:userId/edit", isAuthenticated, async (req, res) => {
   try {
     const { userId } = req.params;
     const {
@@ -54,7 +54,8 @@ router.post('/profile/:userId/edit', isAuthenticated, async (req, res) => {
     const profileUser = await User.findById(userId);
 
     // Check if the current user is the profile user
-    const permission = currentUser._id.toString() === profileUser._id.toString();
+    const permission =
+      currentUser._id.toString() === profileUser._id.toString();
 
     if (permission) {
       // Update the user's profile
@@ -67,13 +68,13 @@ router.post('/profile/:userId/edit', isAuthenticated, async (req, res) => {
         description,
         genres,
       });
-      res.json({ success: true, message: 'Profile updated successfully' });
+      res.json({ success: true, message: "Profile updated successfully" });
     } else {
-      res.status(403).json({ error: 'Permission denied' });
+      res.status(403).json({ error: "Permission denied" });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'An error occurred' });
+    res.status(500).json({ error: "An error occurred" });
   }
 });
 
@@ -204,7 +205,7 @@ router.put("/friend-request/:friendId", isAuthenticated, async (req, res) => {
     await User.findByIdAndUpdate(friendId, {
       $push: { friendRequests: user._id },
     });
-    res.json(user);
+    res.json({ message: "success" });
   } catch (error) {
     res.json(error);
   }
@@ -221,6 +222,7 @@ router.put(
       await User.findByIdAndUpdate(friendId, {
         $pull: { friendRequests: user._id },
       });
+      res.json({ message: "success" });
     } catch (error) {
       res.json(error);
     }
@@ -239,6 +241,7 @@ router.put(
         $pull: { friendRequests: friendId },
         $push: { friends: friendId },
       });
+      res.json({ message: "success" });
     } catch (error) {
       res.json(error);
     }
@@ -256,6 +259,7 @@ router.put(
       await User.findByIdAndUpdate(user._id, {
         $pull: { friendRequests: friendId },
       });
+      res.json({ message: "success" });
     } catch (error) {
       res.json(error);
     }

@@ -113,7 +113,8 @@ router.post("/login", (req, res, next) => {
   }
 
   // Check the users collection if a user with the same username exists
-  User.findOne({ username }).populate("friendRequests messages posts")
+  User.findOne({ username })
+    .populate("friendRequests messages posts")
     .then((foundUser) => {
       if (!foundUser) {
         // If the user is not found, send an error response
@@ -126,8 +127,16 @@ router.post("/login", (req, res, next) => {
 
       if (passwordCorrect) {
         // Deconstruct the user object to omit the password
-        const { _id, email, username, img, friends, friendRequests, messages, posts} =
-        foundUser;
+        const {
+          _id,
+          email,
+          username,
+          img,
+          friends,
+          friendRequests,
+          messages,
+          posts,
+        } = foundUser;
 
         // Create an object that will be set as the token payload
         const payload = {
@@ -164,6 +173,43 @@ router.get("/verify", isAuthenticated, (req, res, next) => {
 
   // Send back the token payload object containing the user data
   res.status(200).json(req.payload);
+});
+
+//Route to update the token
+router.get("/updateToken", isAuthenticated, async (req, res, next) => {
+  const id = req.payload._id;
+
+  const user = await User.findById(id).populate("friends friendRequests messages");
+
+  const {
+    _id,
+    email,
+    username,
+    img,
+    friendRequests,
+    friends,
+    messages,
+    posts,
+  } = user;
+
+  // Create an object that will be set as the token payload
+  const payload = {
+    _id,
+    email,
+    username,
+    img,
+    friendRequests,
+    friends,
+    messages,
+    posts,
+  };
+
+  // Create a JSON Web Token and sign it
+  const authToken = jwt.sign(payload, process.env.TOKEN_SECRET, {
+    algorithm: "HS256",
+    expiresIn: "6h",
+  });
+  res.status(200).json({ authToken: authToken });
 });
 
 module.exports = router;
