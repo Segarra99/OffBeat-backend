@@ -10,22 +10,28 @@ const Sample = require("../models/Sample.model");
 const Message = require("../models/Message.model");
 
 // POST Route to create a message
-router.post("/message/:userId/create", async(req,res)=>{
-  try{
-    const response = await Message.create({
-      sender,
-      receiver,
-      content
-    })
-    await User.findByIdAndUpdate(response.receiver, {
-      $push: {messages: response._id}
-    })
-    res.json(response);
-  }
-  catch(error){
+router.post("/message/:userId/create", isAuthenticated, async (req, res) => {
+  const { userId } = req.params;
+  const { content } = req.body;
+  const user = req.payload;
+  try {
+    const message = await Message.create({
+      content,
+    });
+    await Message.findByIdAndUpdate(message._id, {
+      $push: { receiver: userId },
+    });
+    await Message.findByIdAndUpdate(message._id, {
+      $push: { sender: user._id },
+    });
+    await User.findByIdAndUpdate(userId, {
+      $push: { messages: message._id },
+    });
+    res.json(message);
+  } catch (error) {
     res.json(error);
   }
-})
+});
 
 // PUT Route to remove message after clicking reply
 /* router.put("/message/:messageId", async(req,res)=>{
@@ -42,18 +48,17 @@ router.post("/message/:userId/create", async(req,res)=>{
   }
 }); */
 
-router.delete("/message/:messageId/delete", async(req,res)=>{
-  const {messageId} = req.params;
-  try{
+router.delete("/message/:messageId/delete", async (req, res) => {
+  const { messageId } = req.params;
+  try {
     const deletedMessage = await Message.findByIdAndDelete(messageId);
     await User.findByIdAndUpdate(deletedMessage.receiver, {
-      $pull: {messages: messageId}
-    })
-    res.json(deletedMessage)
-  }
-  catch(error){
+      $pull: { messages: messageId },
+    });
+    res.json(deletedMessage);
+  } catch (error) {
     res.json(error);
   }
-})
+});
 
 module.exports = router;
