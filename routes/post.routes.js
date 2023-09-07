@@ -108,18 +108,6 @@ router.delete("/feed/:postId", async (req, res) => {
 
 
  /* COMMENTS ROUTES */ 
-/* GET route to display all Comments */
-router.get("/feed/comments", async (req, res) => {
-
-    try {
-        let allComments = await Comment.find().populate("author post")
-        
-        res.json(allComments);
-    }
-    catch(error){
-        res.json(error)
-    }
-});
 
 /* POST route that creates a new comment */
 router.post("/feed/comments", async (req, res) => {
@@ -133,6 +121,10 @@ router.post("/feed/comments", async (req, res) => {
         author,
         post
       });
+
+      await Post.findByIdAndUpdate(response.post, {
+        $push: {comments: response._id}
+      })
       
       res.json(response);
     } catch (error) {
