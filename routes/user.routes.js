@@ -15,7 +15,7 @@ router.get("/profile/:userId", isAuthenticated, async (req, res) => {
   try {
     let currentUser = await User.findById(user._id);
     let profileUser = await User.findById(userId);
-    await profileUser.populate("bands bandReviews artistReviews samples");
+    await profileUser.populate("bands bandReviews artistReviews samples friends");
     await profileUser.populate({
       path: "bandReviews",
       populate: {
@@ -242,6 +242,9 @@ router.put(
         $pull: { friendRequests: friendId },
         $push: { friends: friendId },
       });
+      await User.findByIdAndUpdate(friendId, {
+        $push: {friends: user._id}
+      })
       res.json({ message: "success" });
     } catch (error) {
       res.json(error);
