@@ -15,9 +15,12 @@ const bandSchema = new Schema({
   genres: {
     type: [String],
   },
-  samples: {
-    type: [String],
-  },
+  samples: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Sample",
+    },
+  ],
   rank: {
     type: Number,
   },

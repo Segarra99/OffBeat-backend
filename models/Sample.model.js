@@ -6,6 +6,10 @@ const sampleSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+    band: {
+      type: Schema.Types.ObjectId,
+      ref: "Band",
+    },
     audio: {
       type: String,
     },

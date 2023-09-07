@@ -6,6 +6,7 @@ const { isAuthenticated } = require("../middleware/jwt.middleware");
 const Band = require("../models/Band.model");
 const Review = require("../models/Review.model");
 const User = require("../models/User.model");
+const Sample = require("../models/Sample.model");
 
 /* GET route to render user profiles */
 router.get("/profile/:userId", isAuthenticated, async (req, res) => {
@@ -278,6 +279,26 @@ router.get("/friends", isAuthenticated, async (req, res) => {
   }
 });
 
-/* POST Route to  */
+/* SAMPLES */
+
+/* POST Route to post samples */
+router.post("/samples", async (req, res) => {
+  const { artist, audio, name } = req.body;
+
+  try {
+    let response = await Sample.create({
+      artist,
+      audio,
+      name,
+    });
+    console.log("Response from Sample.create:", response);
+    await User.findByIdAndUpdate(artist, {
+      $push: { samples: response._id },
+    });
+    res.json(response);
+  } catch (error) {
+    res.json(error);
+  }
+});
 
 module.exports = router;

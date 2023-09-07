@@ -179,7 +179,9 @@ router.get("/verify", isAuthenticated, (req, res, next) => {
 router.get("/updateToken", isAuthenticated, async (req, res, next) => {
   const id = req.payload._id;
 
-  const user = await User.findById(id).populate("friends friendRequests messages");
+  const user = await User.findById(id).populate(
+    "friends friendRequests messages"
+  );
 
   const {
     _id,

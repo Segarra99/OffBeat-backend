@@ -7,6 +7,7 @@ const { isAuthenticated } = require("../middleware/jwt.middleware");
 const Band = require("../models/Band.model");
 const Review = require("../models/Review.model");
 const User = require("../models/User.model");
+const Sample = require("../models/Sample.model");
 
 /* POST Route that creates a new band */
 router.post("/bands", async (req, res) => {
@@ -37,6 +38,18 @@ router.post("/upload", fileUploader.single("img"), (req, res, next) => {
   res.json({ fileUrl: req.file.path });
 });
 
+router.post(
+  "/upload/sample",
+  fileUploader.single("audio"),
+  (req, res, next) => {
+    if (!req.file) {
+      res.json({ fileUrl: "" });
+      return;
+    }
+    res.json({ fileUrl: req.file.path });
+  }
+);
+
 /* GET Route that lists all the bands */
 router.get("/bands", async (req, res) => {
   try {
@@ -53,7 +66,7 @@ router.get("/bands/:bandId", async (req, res) => {
 
   try {
     let foundBand = await Band.findById(bandId).populate(
-      "reviews artists founder"
+      "reviews artists founder samples"
     );
     await foundBand.populate({
       path: "reviews",
@@ -132,6 +145,28 @@ router.post("/bands/:bandId/review", isAuthenticated, async (req, res) => {
       $push: { band: bandId },
     });
     res.json(newReview);
+  } catch (error) {
+    res.json(error);
+  }
+});
+
+/* SAMPLES */
+
+/* POST Route to post samples */
+router.post("/bands/samples", async (req, res) => {
+  const { band, audio, name } = req.body;
+
+  try {
+    let response = await Sample.create({
+      band,
+      audio,
+      name,
+    });
+    console.log("Response from Sample.create:", response);
+    await Band.findByIdAndUpdate(band, {
+      $push: { samples: response._id },
+    });
+    res.json(response);
   } catch (error) {
     res.json(error);
   }
