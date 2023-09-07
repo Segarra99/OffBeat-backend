@@ -46,17 +46,9 @@ router.get("/feed/:postId", async (req, res) => {
 
   try {
     let foundPost = await Post.findById(postId)
-    .populate(
-      "reviews artists founder samples");
-    await foundPost.populate({
-      path: "reviews",
-      populate: {
-        path: "user",
-        model: "User",
-      },
-    }).sort({comments : -1});
+    .populate("author comments likes")
 
-    res.json(foundBand);
+    res.json(foundPost);
   } catch (error) {
     res.json(error);
   }
@@ -83,18 +75,7 @@ router.put("/feed/:postId/edit", async (req, res) => {
   }
 });
 
-/* GET Route to display post details */
-router.get("/feed/:postId", async (req, res) => {
-  const { postId } = req.params;
-  try {
-    const response = await Post.findById(postId).populate(
-      "author comments likes"
-    );
-    res.json(response);
-  } catch (error) {
-    res.json(error);
-  }
-});
+
 
 /* DELETE Route to delete a post */
 router.delete("/feed/:postId/delete", async (req, res) => {
