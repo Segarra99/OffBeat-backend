@@ -103,12 +103,6 @@ const userSchema = new Schema(
         ref: "Message",
       },
     ],
-    newMessages: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Message",
-      },
-    ],
   },
   {
     // this second object adds extra properties: `createdAt` and `updatedAt`

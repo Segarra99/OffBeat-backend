@@ -114,7 +114,7 @@ router.post("/login", (req, res, next) => {
 
   // Check the users collection if a user with the same username exists
   const user = User.findOne({ username })
-    .populate("friends friendRequests messages newMessages posts postNotifications")
+    .populate("friends friendRequests messages posts postNotifications")
     .then((foundUser) => {
       if (!foundUser) {
         // If the user is not found, send an error response
@@ -135,7 +135,6 @@ router.post("/login", (req, res, next) => {
           friendRequests,
           friends,
           messages,
-          newMessages,
           posts,
           postNotifications,
         } = foundUser;
@@ -149,7 +148,6 @@ router.post("/login", (req, res, next) => {
           friendRequests,
           friends,
           messages,
-          newMessages,
           posts,
           postNotifications,
         };
@@ -184,7 +182,7 @@ router.get("/updateToken", isAuthenticated, async (req, res, next) => {
   const id = req.payload._id;
 
   const user = await User.findById(id).populate(
-    "friends friendRequests messages newMessages posts postNotifications"
+    "friends friendRequests messages posts postNotifications"
   );
   await user.populate({
     path: "postNotifications",
@@ -202,7 +200,6 @@ router.get("/updateToken", isAuthenticated, async (req, res, next) => {
     friendRequests,
     friends,
     messages,
-    newMessages,
     posts,
     postNotifications,
   } = user;
@@ -216,7 +213,6 @@ router.get("/updateToken", isAuthenticated, async (req, res, next) => {
     friendRequests,
     friends,
     messages,
-    newMessages,
     posts,
     postNotifications,
   };
