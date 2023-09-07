@@ -37,7 +37,8 @@ router.post("/signup", (req, res, next) => {
     username === "" ||
     firstName === "" ||
     lastName === "" ||
-    country === "" 
+    country === "" ||
+    description === ""
   ) {
     res.status(400).json({
       message: "Provide email, password, username, first name and last name",
