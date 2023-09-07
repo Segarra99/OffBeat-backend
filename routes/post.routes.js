@@ -67,9 +67,7 @@ router.delete("/feed/:postId", async (req, res) => {
   }
 });
 
-
-
- /* COMMENTS ROUTES */ 
+/* COMMENTS ROUTES */ 
 
 /* POST route that creates a new comment */
 router.post("/feed/comments", async (req, res) => {

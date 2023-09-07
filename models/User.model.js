@@ -90,7 +90,20 @@ const userSchema = new Schema(
         ref: "Post",
       },
     ],
+
+    postNotifications: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Post",
+      },
+    ],
     messages: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Message",
+      },
+    ],
+    NewMessages: [
       {
         type: Schema.Types.ObjectId,
         ref: "Message",
