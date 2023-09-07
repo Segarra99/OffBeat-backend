@@ -113,8 +113,8 @@ router.post("/login", (req, res, next) => {
   }
 
   // Check the users collection if a user with the same username exists
-  User.findOne({ username })
-    .populate("friendRequests messages posts")
+  const user = User.findOne({ username })
+    .populate("friends friendRequests messages newMessages posts postNotifications")
     .then((foundUser) => {
       if (!foundUser) {
         // If the user is not found, send an error response
@@ -132,10 +132,12 @@ router.post("/login", (req, res, next) => {
           email,
           username,
           img,
-          friends,
           friendRequests,
+          friends,
           messages,
+          newMessages,
           posts,
+          postNotifications,
         } = foundUser;
 
         // Create an object that will be set as the token payload
@@ -147,7 +149,9 @@ router.post("/login", (req, res, next) => {
           friendRequests,
           friends,
           messages,
+          newMessages,
           posts,
+          postNotifications,
         };
 
         // Create a JSON Web Token and sign it
@@ -180,8 +184,15 @@ router.get("/updateToken", isAuthenticated, async (req, res, next) => {
   const id = req.payload._id;
 
   const user = await User.findById(id).populate(
-    "friends friendRequests messages"
+    "friends friendRequests messages newMessages posts postNotifications"
   );
+  await user.populate({
+    path: "postNotifications",
+    populate: {
+      path: "author",
+      model: "User",
+    },
+  });
 
   const {
     _id,
@@ -191,7 +202,9 @@ router.get("/updateToken", isAuthenticated, async (req, res, next) => {
     friendRequests,
     friends,
     messages,
+    newMessages,
     posts,
+    postNotifications,
   } = user;
 
   // Create an object that will be set as the token payload
@@ -203,7 +216,9 @@ router.get("/updateToken", isAuthenticated, async (req, res, next) => {
     friendRequests,
     friends,
     messages,
+    newMessages,
     posts,
+    postNotifications,
   };
 
   // Create a JSON Web Token and sign it

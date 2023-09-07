@@ -94,7 +94,7 @@ const userSchema = new Schema(
     postNotifications: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Post",
+        ref: "Comment",
       },
     ],
     messages: [
@@ -103,7 +103,7 @@ const userSchema = new Schema(
         ref: "Message",
       },
     ],
-    NewMessages: [
+    newMessages: [
       {
         type: Schema.Types.ObjectId,
         ref: "Message",
