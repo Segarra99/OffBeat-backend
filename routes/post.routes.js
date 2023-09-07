@@ -11,7 +11,10 @@ const Comment = require("../models/Comment.model");
 /* GET route to display all Posts */
 router.get("/feed", async (req, res) => {
   try {
-    let allPosts = await Post.find().populate("author comments likes");
+    let allPosts = await Post.find()
+    .populate("author comments likes")
+    .sort({createdAt : -1 })
+
     res.json(allPosts);
   } catch (error) {
     res.json(error);
@@ -35,6 +38,31 @@ router.post("/feed", async (req, res) => {
     res.json(error);
   }
 });
+
+
+/* GET Route that display info about a specific post */
+router.get("/feed/:postId", async (req, res) => {
+  const { postId } = req.params;
+
+  try {
+    let foundPost = await Post.findById(postId)
+    .populate(
+      "reviews artists founder samples");
+    await foundPost.populate({
+      path: "reviews",
+      populate: {
+        path: "user",
+        model: "User",
+      },
+    }).sort({comments : -1});
+
+    res.json(foundBand);
+  } catch (error) {
+    res.json(error);
+  }
+});
+
+
 
 /* PUT Route to update info of a post (TO DECIDE IF THEY CAN EDIT POSTS OR NOT) */
 router.put("/feed/:postId/edit", async (req, res) => {
@@ -136,5 +164,35 @@ router.put("/notification/:postId/:commentId", async (req, res) => {
     res.json(error);
   }
 });
+
+/* POST route to like or dislike posts */
+router.post("/feed/:postId/like", isAuthenticated, async (req, res) => {
+  const { postId } = req.params;
+  const{user} = req.payload;
+  const currentUser = await User.findById(user._id)
+  const chosenPost = await Post.findById(postId);
+  const isLiked = chosenPost.likes.includes(user._id);
+
+
+  try {
+    if (!isLiked) {
+        await Post.findByIdAndUpdate(chosenPost._id, {
+          $push: {likes: currentUser._id}
+        });
+    } else {
+        await Post.findByIdAndUpdate(chosenPost._id, {
+          $pull: {likes: currentUser._id}
+        });
+    }
+
+    await chosenPost.save();
+
+    res.json(!isLiked);
+} catch (error) {
+    res.json(error);
+}
+})
+
+
 
 module.exports = router;
