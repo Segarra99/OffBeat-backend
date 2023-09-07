@@ -18,27 +18,6 @@ router.get("/feed", async (req, res) => {
   }
 });
 
-/* GET route to display a single post page */
-router.get("/feed/:postId", async (req, res) => {
-    const { postId } = req.params;
-  
-    try {
-      let foundPost = await Post.findById(postId).populate(
-        "author comments likes"
-      );
-      await foundPost.populate({
-        path: "comments",
-        populate: {
-          path: "user",
-          model: "User",
-        },
-      });
-      res.json(foundPost);
-    } catch (error) {
-      res.json(error);
-    }
-  });
-
 /* POST route that creates a new post */
 router.post("/feed", async (req, res) => {
     const { content, img, author } =
@@ -57,15 +36,6 @@ router.post("/feed", async (req, res) => {
       res.json(error);
     }
   });
-  
-  router.post("/upload", fileUploader.single("img"), (req, res, next) => {
-    if (!req.file) {
-      res.json({ fileUrl: "" });
-      return;
-    }
-    res.json({ fileUrl: req.file.path });
-  });
-
 
 /* PUT Route to update info of a post (TO DECIDE IF THEY CAN EDIT POSTS OR NOT) */
 router.put("/feed/:postId/edit", async (req, res) => {
@@ -84,14 +54,6 @@ router.put("/feed/:postId/edit", async (req, res) => {
   } catch (error) {
     res.json(error);
   }
-});
-
-router.post("/upload", fileUploader.single("img"), (req, res, next) => {
-  if (!req.file) {
-    res.json({ fileUrl: "" });
-    return;
-  }
-  res.json({ fileUrl: req.file.path });
 });
 
 /* DELETE Route to delete a post */
@@ -133,10 +95,13 @@ router.post("/feed/comments", async (req, res) => {
   });
 
 /* DELETE Route to delete a post */
-router.delete("/feed/:commentId", async (req, res) => {
+router.delete("/feed/comments/:commentId", async (req, res) => {
     const { commentId } = req.params;
     try {
-      await Comment.findByIdAndDelete(commentId);
+      const deletedComment = await Comment.findByIdAndDelete(commentId);
+      await Post.findByIdAndUpdate(deletedComment.post, {
+        $pull: {comments: deletedComment._id}
+      })
       res.json({ message: "Comment was successfully deleted" });
     } catch (error) {
       res.json(error);
