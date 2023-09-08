@@ -34,7 +34,7 @@ router.post("/message/:userId/create", isAuthenticated, async (req, res) => {
 });
 
 // PUT Route to remove message after clicking reply
-/* router.put("/message/:messageId", async(req,res)=>{
+router.put("/message/:messageId", async(req,res)=>{
   const {messageId} = req.params;
   try{
     const receivedMessage = await Message.findById(messageId);
@@ -46,7 +46,7 @@ router.post("/message/:userId/create", isAuthenticated, async (req, res) => {
   catch(error){
     res.json(error);
   }
-}); */
+});
 
 router.delete("/message/:messageId/delete", async (req, res) => {
   const { messageId } = req.params;

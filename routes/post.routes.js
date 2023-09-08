@@ -41,7 +41,7 @@ router.post("/feed", async (req, res) => {
 
 
 /* GET Route that display info about a specific post */
-router.get("/feed/:postId", async (req, res) => {
+router.get("/feed/:postId", isAuthenticated, async (req, res) => {
   const { postId } = req.params;
 
   try {

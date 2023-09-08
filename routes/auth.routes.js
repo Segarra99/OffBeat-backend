@@ -191,6 +191,14 @@ router.get("/updateToken", isAuthenticated, async (req, res, next) => {
       model: "User",
     },
   });
+  await user.populate({
+    path: "messages",
+    populate: {
+      path: "sender",
+      model: "User",
+    },
+
+  })
 
   const {
     _id,
