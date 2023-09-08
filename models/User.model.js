@@ -42,6 +42,7 @@ const userSchema = new Schema(
     },
     img: {
       type: String,
+      default: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGjt2yc1eucAzdqAa7ThZTYxtpMXXem3J16Q&usqp=CAU",
     },
     samples: [
       {
