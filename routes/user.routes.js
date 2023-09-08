@@ -38,7 +38,7 @@ router.get("/profile/:userId", isAuthenticated, async (req, res) => {
 });
 
 /* POST route to edit profile page */
-router.post("/profile/:userId/edit", isAuthenticated, async (req, res) => {
+router.put("/profile/:userId/edit", isAuthenticated, async (req, res) => {
   try {
     const { userId } = req.params;
     const {
@@ -51,7 +51,7 @@ router.post("/profile/:userId/edit", isAuthenticated, async (req, res) => {
       genres,
     } = req.body;
 
-    const currentUser = await User.findById(req.session.currentUser._id);
+    const currentUser = await User.findById(req.payload._id);
     const profileUser = await User.findById(userId);
 
     // Check if the current user is the profile user
