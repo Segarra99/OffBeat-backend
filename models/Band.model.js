@@ -8,6 +8,7 @@ const bandSchema = new Schema({
   },
   img: {
     type: String,
+    default: "https://www.cfbands.com/uploads/1/3/6/9/13694168/2610451_orig.jpg",
   },
   description: {
     type: String,

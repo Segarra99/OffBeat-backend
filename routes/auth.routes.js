@@ -28,6 +28,8 @@ router.post("/signup", (req, res, next) => {
     lastName,
     country,
     description,
+    genres,
+    instruments
   } = req.body;
 
   // Check if info is provided as empty strings
@@ -41,7 +43,7 @@ router.post("/signup", (req, res, next) => {
     description === ""
   ) {
     res.status(400).json({
-      message: "Provide email, password, username, first name and last name",
+      message: "All camps should be filled",
     });
     return;
   }
@@ -86,6 +88,8 @@ router.post("/signup", (req, res, next) => {
         lastName,
         country,
         description,
+        genres,
+        instruments
       });
     })
     .then((createdUser) => {
