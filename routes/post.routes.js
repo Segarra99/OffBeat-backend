@@ -12,7 +12,7 @@ const Comment = require("../models/Comment.model");
 router.get("/feed", async (req, res) => {
   try {
     let allPosts = await Post.find()
-      .populate("author comments likes")
+      .populate("author comments")
       .sort({ createdAt: -1 });
 
     res.json(allPosts);
