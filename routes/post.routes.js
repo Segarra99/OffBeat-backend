@@ -12,8 +12,8 @@ const Comment = require("../models/Comment.model");
 router.get("/feed", async (req, res) => {
   try {
     let allPosts = await Post.find()
-    .populate("author comments likes")
-    .sort({createdAt : -1 })
+      .populate("author comments likes")
+      .sort({ createdAt: -1 });
 
     res.json(allPosts);
   } catch (error) {
@@ -39,22 +39,20 @@ router.post("/feed", async (req, res) => {
   }
 });
 
-
 /* GET Route that display info about a specific post */
 router.get("/feed/:postId", isAuthenticated, async (req, res) => {
   const { postId } = req.params;
 
   try {
-    let foundPost = await Post.findById(postId)
-    .populate("author comments likes")
+    let foundPost = await Post.findById(postId).populate(
+      "author comments likes"
+    );
 
     res.json(foundPost);
   } catch (error) {
     res.json(error);
   }
 });
-
-
 
 /* PUT Route to update info of a post (TO DECIDE IF THEY CAN EDIT POSTS OR NOT) */
 router.put("/feed/:postId/edit", async (req, res) => {
@@ -74,8 +72,6 @@ router.put("/feed/:postId/edit", async (req, res) => {
     res.json(error);
   }
 });
-
-
 
 /* DELETE Route to delete a post */
 router.delete("/feed/:postId/delete", async (req, res) => {
@@ -147,33 +143,29 @@ router.put("/notification/:postId/:commentId", async (req, res) => {
 });
 
 /* POST route to like or dislike posts */
-router.post("/feed/:postId/like", isAuthenticated, async (req, res) => {
+router.put("/feed/:postId/like", isAuthenticated, async (req, res) => {
   const { postId } = req.params;
-  const{user} = req.payload;
-  const currentUser = await User.findById(user._id)
+  const user = req.payload;
+  console.log(user)
+  const currentUser = await User.findById(user._id);
   const chosenPost = await Post.findById(postId);
   const isLiked = chosenPost.likes.includes(user._id);
 
-
   try {
     if (!isLiked) {
-        await Post.findByIdAndUpdate(chosenPost._id, {
-          $push: {likes: currentUser._id}
-        });
+      await Post.findByIdAndUpdate(chosenPost._id, {
+        $push: { likes: currentUser._id },
+      });
     } else {
-        await Post.findByIdAndUpdate(chosenPost._id, {
-          $pull: {likes: currentUser._id}
-        });
+      await Post.findByIdAndUpdate(chosenPost._id, {
+        $pull: { likes: currentUser._id },
+      });
     }
 
-    await chosenPost.save();
-
     res.json(!isLiked);
-} catch (error) {
+  } catch (error) {
     res.json(error);
-}
-})
-
-
+  }
+});
 
 module.exports = router;
